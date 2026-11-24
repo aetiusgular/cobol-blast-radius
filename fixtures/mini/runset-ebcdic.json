@@ -2,6 +2,7 @@
   "$comment": "The same run set with the input as EBCDIC (code page 037) fixed records. Every output must match runset.json's byte for byte.",
   "carddemo_commit": "fixture",
   "clock": "2022/07/18 10:00:00",
+  "cobc_flags": ["-std=ibm"],
   "libraries": {
     "MINI.PROC": {
       "dir": "app/proc",

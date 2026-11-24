@@ -2,6 +2,7 @@
   "$comment": "Run set for the fixture app (contracts/runset.md). Paths are relative to fixtures/mini.",
   "carddemo_commit": "fixture",
   "clock": "2022/07/18 10:00:00",
+  "cobc_flags": ["-std=ibm"],
   "libraries": {
     "MINI.PROC": {
       "dir": "app/proc",

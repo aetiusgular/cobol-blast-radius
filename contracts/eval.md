@@ -15,7 +15,7 @@ split-path: contracts/split.jsonl
 
 ## Rules
 
-1. **Tune on dev only.** The graph lane (P3b) builds and tests against `fixtures/` and the dev rows. It does not read the heldout rows, and nothing in `radius/` may name a heldout change id.
+1. **Tune on dev only.** The graph lane (P3b) builds and tests against `fixtures/` and the dev rows. It does not read the heldout rows, and nothing in `radius/` may name a heldout change id or the word `heldout` (`scripts/check-isolation.py`); code that reads the split filters on `"dev"`.
 2. **Heldout runs once per release**, through the eval runner, which refuses to run heldout when the file's SHA-256 is not the one above (`approval.evalrun.SplitHashMismatch`).
 3. **E0 runs first**, on dev and heldout, before any tuning of the graph is recorded. E0 is the one-hop baseline in SPEC.md.
 4. **No model, so no five-run bands.** A repeat run at the same commit must give identical rows apart from `run_id` and `date`. A difference is a bug.

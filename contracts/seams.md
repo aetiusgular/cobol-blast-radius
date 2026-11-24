@@ -8,7 +8,7 @@ P2 wrote each function as a stub that raises `NotImplementedError("<module>.<fun
 |---|---|
 | `groundtruth.harness.run(root, runset, workdir, change=None)` | A run result (`ground-truth.md`). `root` is a CardDemo-shaped tree, `runset` the parsed run-set dict, `workdir` an empty folder the harness may use. The harness copies `root` before applying `change`; it never writes under `root`. |
 | `groundtruth.diff.diff(baseline, after)` | An output diff (`ground-truth.md`). Pure: reads its two arguments only. |
-| `groundtruth.generate.generate(cls, seed, root, runset)` | A change (`change.md`) of class `cls`, the same bytes for the same arguments. `compile_break` is `true` or `false`, never `null`: the generator checks with `cobc -fsyntax-only`. |
+| `groundtruth.generate.generate(cls, seed, root, runset)` | A change (`change.md`) of class `cls`, the same bytes for the same arguments. `compile_break` is `true` or `false`, never `null`: the generator checks with `cobc -fsyntax-only` and the run set's `cobc_flags`, the same flags the harness builds with. |
 | `groundtruth.changes.apply(change, root)` | Applies a change in place under `root`, all or nothing. Raises `groundtruth.changes.ApplyError` on a `before` mismatch. |
 
 ## P3b, `radius/` (F1, F2)
@@ -39,4 +39,4 @@ A lane's own tests go in `<package>/tests/test_*.py`, with an `__init__.py` in `
 - `groundtruth` imports nothing from `radius` or `approval`.
 - `approval` may import both, through the names above only.
 
-`scripts/check-isolation.py` enforces the first two in `scripts/test.sh`, and also fails if anything under `radius/` names a heldout change id.
+`scripts/check-isolation.py` enforces the first two in `scripts/test.sh`, and also fails if anything under `radius/` names a heldout change id or the word `heldout`.

@@ -35,7 +35,7 @@ class GenerateRed(TempDirCase):
                 self.assertIsNotNone(cobc, "cobc not found: run scripts/setup.sh")
                 root = copy_tree(MINI, self.tmp / f"{cls}-{seed}")
                 changes.apply(ch, root)
-                rcs = [subprocess.run([cobc, "-fsyntax-only", "-std=ibm", "-I", str(root / "app/cpy"),
+                rcs = [subprocess.run([cobc, "-fsyntax-only", *rs["cobc_flags"], "-I", str(root / "app/cpy"),
                                        str(root / "app/cbl" / f"{p}.cbl")], capture_output=True).returncode
                        for p in rs["programs"]]
                 self.assertEqual(any(rcs), ch["compile_break"], f"{cls} seed {seed}: rcs {rcs}")

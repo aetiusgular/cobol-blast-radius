@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Lane isolation (contracts/seams.md, written in P2): radius never imports
 groundtruth or approval; groundtruth never imports radius or approval; and
-nothing under radius/ names a heldout change id (contracts/eval.md rule 1)."""
+nothing under radius/ names a heldout change id or the word "heldout", so
+it cannot select heldout rows from the split (contracts/eval.md rule 1)."""
 import ast
 import json
 import re
@@ -31,8 +32,11 @@ heldout = {json.loads(ln)["id"] for ln in (REPO / "contracts/split.jsonl").read_
            if json.loads(ln)["split"] == "heldout"}
 for p in sorted((REPO / "radius").rglob("*")):
     if p.is_file() and "__pycache__" not in p.parts:
-        for m in set(re.findall(r"S-\d{3}", p.read_text(errors="replace"))) & heldout:
+        text = p.read_text(errors="replace")
+        for m in set(re.findall(r"S-\d{3}", text)) & heldout:
             fails.append(f"{p.relative_to(REPO)} names heldout change {m}")
+        if re.search(r"heldout", text, re.IGNORECASE):
+            fails.append(f"{p.relative_to(REPO)} names the heldout split (radius reads dev rows only)")
 
 if fails:
     for f in fails:

@@ -6,6 +6,7 @@ The batch slice of CardDemo that ground truth executes and that the blast radius
 |---|---|
 | `carddemo_commit` | The pinned CardDemo commit. `scripts/fetch-carddemo.sh` checks it out into `vendor/carddemo`. |
 | `clock` | The value the harness puts in `COB_CURRENT_DATE` for every program it runs, so `FUNCTION CURRENT-DATE` is fixed and the baseline repeats byte for byte. |
+| `cobc_flags` | The dialect flags for every `cobc` call that decides ground truth: the harness's build of each program and the generator's `-fsyntax-only` check. The harness adds `-I` for each of `copy_dirs` and its own output flags (`-x` or `-m`), and nothing that changes the dialect. `-std=ibm` is the dialect the P1 probe and P2's split check used. |
 | `libraries` | Partitioned data sets that JCL names (`JCLLIB ORDER`, `&CNTLLIB(REPROCT)`), mapped to a folder and the member file extensions. |
 | `jobs` | The jobs, in the order they run. A job runs once per harness run. |
 | `programs` | The COBOL programs the run set executes. The harness compiles each one; the generator targets only these programs, the copybooks they COPY and the job files in `jobs`. |
