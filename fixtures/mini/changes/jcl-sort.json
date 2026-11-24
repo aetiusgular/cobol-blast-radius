@@ -1,0 +1,16 @@
+{
+  "id": "M-sort",
+  "class": "jcl_step",
+  "seed": null,
+  "summary": "MINIJOB2: sort order A to D",
+  "edits": [
+    {
+      "file": "app/jcl/MINIJOB2.jcl",
+      "line": 6,
+      "op": "replace",
+      "before": " SORT FIELDS=(1,5,CH,A)",
+      "after": " SORT FIELDS=(1,5,CH,D)"
+    }
+  ],
+  "compile_break": false
+}

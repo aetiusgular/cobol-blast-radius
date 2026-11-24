@@ -1,0 +1,14 @@
+//MINIJOB1 JOB 'MINI REPORT',CLASS=A,MSGCLASS=0
+//JOBLIB   JCLLIB ORDER=('MINI.PROC')
+//*  Define the GDG, then run the report through a PROC whose output
+//*  DSN is a symbolic parameter.
+//DEFGDG   EXEC PGM=IDCAMS
+//SYSPRINT DD SYSOUT=*
+//SYSIN    DD *
+   DEFINE GENERATIONDATAGROUP -
+   (NAME(MINI.OUTFILE) -
+    LIMIT(5) -
+    SCRATCH -
+   )
+/*
+//STEP1    EXEC MINIPROC,OUTDSN=MINI.OUTFILE

@@ -1,12 +1,15 @@
 {
-  "$comment": "Folder-level ownership for the P3 lanes (BUILD_OUTLINE.md sections 1 and 3). A path is owned by the lane whose `owns` prefix matches it and whose `except` list does not; a prefix ending in / is a folder, anything else is one file. `everyLane` paths any lane may edit (state, decisions, security items, review files, the README). `shared` maps a file to the lanes that each own a section in it, marked `# [lane-P3a]`, `// [lane-P3a]` or `<!-- [lane-P3a] -->`. `noLane` paths no lane edits; changes there go under Requests for integration and P4 applies them. `uncollected` lists test-file patterns a runner would never collect. Written in P2; only P2 and P4 edit it. The template's lanes own nothing until P2 fills them.",
+  "$comment": "Folder-level ownership for the P3 lanes (BUILD_OUTLINE.md sections 1 and 3). A path is owned by the lane whose `owns` prefix matches it and whose `except` list does not; a prefix ending in / is a folder, anything else is one file. `everyLane` paths any lane may edit (state, decisions, security items, review files, the README). `shared` maps a file to the lanes that each own a section in it, marked `# [lane-P3a]`, `// [lane-P3a]` or `<!-- [lane-P3a] -->`. `noLane` paths no lane edits; changes there go under Requests for integration and P4 applies them. `uncollected` lists test-file patterns a runner would never collect. Written in P2 (contracts/seams.md has the seams); only P2 and P4 edit it. P3a (ground truth) and P3b (graph) own disjoint folders and scripts/check-isolation.py keeps them from importing each other.",
   "lanes": {
-    "P3a": {"owns": [], "except": []},
-    "P3b": {"owns": [], "except": []},
-    "P3c": {"owns": [], "except": []}
+    "P3a": {"owns": ["groundtruth/"], "except": []},
+    "P3b": {"owns": ["radius/"], "except": []},
+    "P3c": {"owns": ["approval/"], "except": []}
   },
   "everyLane": [".forge/state.json", "DECISIONS.md", "SECURITY.md", "reviews/", "README.md"],
   "shared": {},
-  "noLane": [".github/", ".claude/", "scripts/", "contracts/", "fixtures/", "tests/red/", "SPEC.md", "LICENSE", ".gitignore"],
-  "uncollected": []
+  "noLane": [".github/", ".claude/", "scripts/", "contracts/", "fixtures/", "tests/", "SPEC.md", "LICENSE", ".gitignore", "research/", "results/", "design/"],
+  "uncollected": [
+    {"under": ["groundtruth/", "radius/", "approval/"], "pattern": "/tests/(?!test_)[^/]*test[^/]*\\.py$", "why": "scripts/test.sh discovers only test_*.py in <package>/tests/"},
+    {"under": ["groundtruth/", "radius/", "approval/"], "pattern": "^[a-z]+/(?!tests/)(?:[^/]+/)*test_[^/]*\\.py$", "why": "scripts/test.sh discovers tests only under <package>/tests/"}
+  ]
 }

@@ -1,0 +1,16 @@
+{
+  "id": "M-dead",
+  "class": "program_logic",
+  "seed": null,
+  "summary": "MINIRPT: DISPLAY literal in 9000-UNUSED changed",
+  "edits": [
+    {
+      "file": "app/cbl/MINIRPT.cbl",
+      "line": 49,
+      "op": "replace",
+      "before": "           DISPLAY 'NEVER REACHED'.",
+      "after": "           DISPLAY 'NEVER REACHEX'."
+    }
+  ],
+  "compile_break": false
+}

@@ -1,0 +1,79 @@
+{
+  "$comment": "The batch run set the ground-truth harness (P3a) executes, in order, and the predictor (P3b) reasons over. Format in contracts/runset.md. Paths are relative to the CardDemo root unless `from` is `repo`.",
+  "carddemo_commit": "59cc6c2fd7ebd7ef7925cad552a01a4b8b6e4d5e",
+  "clock": "2022/07/18 10:00:00",
+  "cobc_flags": ["-std=ibm"],
+  "libraries": {
+    "AWS.M2.CARDDEMO.PROC": {"dir": "app/proc", "ext": [".prc", ".PRC"]},
+    "AWS.M2.CARDDEMO.CNTL": {"dir": "app/ctl", "ext": [".ctl", ".CTL"]}
+  },
+  "jobs": [
+    {"job": "DEFGDGB",  "file": "app/jcl/DEFGDGB.jcl"},
+    {"job": "DALYREJS", "file": "app/jcl/DALYREJS.jcl"},
+    {"job": "ACCTFILE", "file": "app/jcl/ACCTFILE.jcl"},
+    {"job": "CARDFILE", "file": "app/jcl/CARDFILE.jcl"},
+    {"job": "XREFFILE", "file": "app/jcl/XREFFILE.jcl"},
+    {"job": "CUSTFILE", "file": "app/jcl/CUSTFILE.jcl"},
+    {"job": "TRANFILE", "file": "app/jcl/TRANFILE.jcl"},
+    {"job": "TCATBALF", "file": "app/jcl/TCATBALF.jcl"},
+    {"job": "TRANCATG", "file": "app/jcl/TRANCATG.jcl"},
+    {"job": "TRANTYPE", "file": "app/jcl/TRANTYPE.jcl"},
+    {"job": "DISCGRP",  "file": "app/jcl/DISCGRP.jcl"},
+    {"job": "READACCT", "file": "app/jcl/READACCT.jcl"},
+    {"job": "READCARD", "file": "app/jcl/READCARD.jcl"},
+    {"job": "READXREF", "file": "app/jcl/READXREF.jcl"},
+    {"job": "READCUST", "file": "app/jcl/READCUST.jcl"},
+    {"job": "POSTTRAN", "file": "app/jcl/POSTTRAN.jcl"},
+    {"job": "INTCALC",  "file": "app/jcl/INTCALC.jcl"},
+    {"job": "TRANBKP",  "file": "app/jcl/TRANBKP.jcl"},
+    {"job": "COMBTRAN", "file": "app/jcl/COMBTRAN.jcl"},
+    {"job": "TRANREPT", "file": "app/jcl/TRANREPT.jcl"}
+  ],
+  "programs": ["CBACT01C", "CBACT02C", "CBACT03C", "CBACT04C", "CBCUS01C", "CBTRN02C", "CBTRN03C"],
+  "program_dirs": ["app/cbl"],
+  "copy_dirs": ["app/cpy"],
+  "utilities": {
+    "IDCAMS": "DELETE, DEFINE CLUSTER, DEFINE ALTERNATEINDEX, DEFINE PATH, DEFINE GENERATIONDATAGROUP, REPRO, BLDINDEX, IF MAXCC ... SET MAXCC",
+    "SORT": "SORT FIELDS, INCLUDE COND (GE, LE, EQ, AND), SYMNAMES",
+    "IEBGENER": "SYSUT1 to SYSUT2 copy",
+    "IEFBR14": "DISP processing only",
+    "SDSF": "skipped (online region commands); step status skipped"
+  },
+  "stubs": {
+    "CEE3ABD": "Language Environment abend: end the step with an abend status",
+    "COBDATFT": "assembler date formatter called by CBACT01C: P3a writes a COBOL stand-in and records its behaviour"
+  },
+  "inputs": [
+    {"dsn": "AWS.M2.CARDDEMO.ACCTDATA.PS",       "path": "app/data/ASCII/acctdata.txt", "encoding": "ascii",  "recfm": "F", "lrecl": 300},
+    {"dsn": "AWS.M2.CARDDEMO.CARDDATA.PS",       "path": "app/data/ASCII/carddata.txt", "encoding": "ascii",  "recfm": "F", "lrecl": 150},
+    {"dsn": "AWS.M2.CARDDEMO.CARDXREF.PS",       "path": "app/data/ASCII/cardxref.txt", "encoding": "ascii",  "recfm": "F", "lrecl": 50},
+    {"dsn": "AWS.M2.CARDDEMO.CUSTDATA.PS",       "path": "app/data/ASCII/custdata.txt", "encoding": "ascii",  "recfm": "F", "lrecl": 500},
+    {"dsn": "AWS.M2.CARDDEMO.DALYTRAN.PS",       "path": "app/data/ASCII/dailytran.txt", "encoding": "ascii", "recfm": "F", "lrecl": 350},
+    {"dsn": "AWS.M2.CARDDEMO.DALYTRAN.PS.INIT",  "path": "app/data/EBCDIC/AWS.M2.CARDDEMO.DALYTRAN.PS.INIT", "encoding": "ebcdic-cp037", "recfm": "F", "lrecl": 350},
+    {"dsn": "AWS.M2.CARDDEMO.DISCGRP.PS",        "path": "app/data/ASCII/discgrp.txt", "encoding": "ascii",   "recfm": "F", "lrecl": 50},
+    {"dsn": "AWS.M2.CARDDEMO.TCATBALF.PS",       "path": "app/data/ASCII/tcatbal.txt", "encoding": "ascii",   "recfm": "F", "lrecl": 50},
+    {"dsn": "AWS.M2.CARDDEMO.TRANCATG.PS",       "path": "app/data/ASCII/trancatg.txt", "encoding": "ascii",  "recfm": "F", "lrecl": 60},
+    {"dsn": "AWS.M2.CARDDEMO.TRANTYPE.PS",       "path": "app/data/ASCII/trantype.txt", "encoding": "ascii",  "recfm": "F", "lrecl": 60},
+    {"dsn": "AWS.M2.CARDDEMO.DATEPARM",          "path": "fixtures/carddemo/dateparm.txt", "from": "repo", "encoding": "ascii", "recfm": "F", "lrecl": 80}
+  ],
+  "excluded_jobs": [
+    {"job": "CREASTMT", "reason": "CBSTM03A fails a GnuCOBOL 3.2 syntax check (CUSTREC.cpy:6), results/P1-feasibility.jsonl"},
+    {"job": "CBEXPORT", "reason": "CBEXPORT fails a GnuCOBOL 3.2 syntax check, results/P1-feasibility.jsonl"},
+    {"job": "CBIMPORT", "reason": "CBIMPORT fails a GnuCOBOL 3.2 syntax check, results/P1-feasibility.jsonl"},
+    {"job": "WAITSTEP", "reason": "COBSWAIT calls the assembler routine MVSWAIT and only sleeps; no output"},
+    {"job": "PRTCATBL", "reason": "SORT OUTREC with EDIT masks is outside the step runner subset"},
+    {"job": "OPENFIL",  "reason": "SDSF commands to the CICS region only"},
+    {"job": "CLOSEFIL", "reason": "SDSF commands to the CICS region only"},
+    {"job": "CBADMCDJ", "reason": "CICS CSD update (DFHCSDUP)"},
+    {"job": "DUSRSECJ", "reason": "user security file, read only by CICS sign-on"},
+    {"job": "FTPJCL",   "reason": "network transfer"},
+    {"job": "TXT2PDF1", "reason": "TSO batch (IKJEFT1B)"},
+    {"job": "INTRDRJ1", "reason": "internal reader job submission"},
+    {"job": "INTRDRJ2", "reason": "internal reader job submission"},
+    {"job": "DEFCUST",  "reason": "duplicate of CUSTFILE's define step"},
+    {"job": "DEFGDGD",  "reason": "alternative GDG set-up, not on the main batch path"},
+    {"job": "ESDSRRDS", "reason": "ESDS and RRDS demo, read by no run-set program"},
+    {"job": "REPTFILE", "reason": "GDG define for a report not on the main batch path"},
+    {"job": "TRANIDX",  "reason": "rebuilds the transaction AIX, read by no run-set program"}
+  ]
+}
