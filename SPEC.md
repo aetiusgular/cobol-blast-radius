@@ -41,7 +41,7 @@ Static impact graphs already exist (AWS Transform's dependency JSON, IBM ADDI, I
 - CICS online programs. They stay in the graph as nodes, and their impacts are marked "predicted, not verifiable".
 - Db2, IMS and MQ optional modules.
 - A real mainframe, TN3270, z/OSMF, or any vendor's product or account.
-- An LLM that proposes changes. Nothing in the core needs a model, so P5 runs on ubuntu-latest. If a later phase adds one, it moves to the box with five-run bands.
+- An LLM that proposes changes. Nothing in the core needs a model or a GPU, so P5 could run on ubuntu-latest; `needs_box` in `.forge/state.json` still routes P5 to the box, and that routing is forge's call. If a later phase adds one, it moves to the box with five-run bands.
 - Production change management.
 
 ## Features to test (P2 writes at least one red test per feature)
@@ -76,7 +76,7 @@ P3a and P3b must not read each other's code. That keeps the ground truth indepen
 
 ## Feasibility already shown (P1)
 
-`results/P1-feasibility.jsonl`, run `P1-feasibility-cobc-syntax-1`: 10 of 13 non-CICS CardDemo programs pass a GnuCOBOL 3.2.0 syntax check at the pinned commit. This is a probe, not an eval number, and it is not a headline.
+`results/P1-feasibility.jsonl`, run `P1-feasibility-cobc-syntax-2`: 11 of 14 non-CICS CardDemo programs pass a GnuCOBOL 3.2.0 syntax check at the pinned commit. This is a probe, not an eval number, and it is not a headline.
 
 ## Licences
 
