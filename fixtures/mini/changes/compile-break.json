@@ -1,0 +1,16 @@
+{
+  "id": "M-break",
+  "class": "program_logic",
+  "seed": null,
+  "summary": "MINIRPT: MOVE from an undefined name",
+  "edits": [
+    {
+      "file": "app/cbl/MINIRPT.cbl",
+      "line": 42,
+      "op": "replace",
+      "before": "           MOVE MR-NAME TO OR-NAME",
+      "after": "           MOVE MR-NAMX TO OR-NAME"
+    }
+  ],
+  "compile_break": true
+}

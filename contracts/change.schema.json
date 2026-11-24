@@ -1,0 +1,28 @@
+{
+  "type": "object",
+  "required": ["id", "class", "seed", "summary", "edits", "compile_break"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {"type": "string", "pattern": "^[A-Za-z0-9_.-]+$"},
+    "class": {"enum": ["copybook_field", "program_logic", "jcl_step", "noop"]},
+    "seed": {"type": ["integer", "null"]},
+    "summary": {"type": "string"},
+    "split": {"enum": ["dev", "heldout"]},
+    "edits": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["file", "line", "op", "before", "after"],
+        "additionalProperties": false,
+        "properties": {
+          "file": {"type": "string", "pattern": "^app/[A-Za-z0-9_./-]+$"},
+          "line": {"type": "integer", "minimum": 0},
+          "op": {"enum": ["replace", "insert_after"]},
+          "before": {"type": ["string", "null"]},
+          "after": {"type": "string"}
+        }
+      }
+    },
+    "compile_break": {"type": ["boolean", "null"]}
+  }
+}

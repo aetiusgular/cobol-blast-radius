@@ -1,0 +1,20 @@
+{
+  "type": "object",
+  "required": ["change_id", "members", "fields", "programs", "jobs", "steps", "datasets", "unverifiable", "why", "predictor"],
+  "additionalProperties": false,
+  "properties": {
+    "change_id": {"type": "string"},
+    "members": {"type": "array", "items": {"type": "string"}},
+    "fields": {"type": "array", "items": {"type": "string"}},
+    "programs": {"type": "array", "items": {"type": "string"}},
+    "jobs": {"type": "array", "items": {"type": "string"}},
+    "steps": {"type": "array", "items": {"type": "string"}},
+    "datasets": {"type": "array", "items": {"type": "string"}},
+    "unverifiable": {"type": "array", "items": {"type": "string"}},
+    "why": {"type": "object"},
+    "predictor": {
+      "type": "object", "required": ["name", "version"],
+      "properties": {"name": {"type": "string"}, "version": {"type": "string"}}
+    }
+  }
+}

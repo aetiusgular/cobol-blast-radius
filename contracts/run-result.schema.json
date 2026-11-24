@@ -1,0 +1,26 @@
+{
+  "type": "object",
+  "required": ["change_id", "carddemo_commit", "cobc_version", "clock", "compile", "steps", "outputs", "input_notes"],
+  "properties": {
+    "change_id": {"type": ["string", "null"]},
+    "carddemo_commit": {"type": "string"},
+    "cobc_version": {"type": "string"},
+    "clock": {"type": "string"},
+    "compile": {"type": "object"},
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["job", "step", "procstep", "program", "status", "rc"],
+        "properties": {
+          "job": {"type": "string"}, "step": {"type": "string"},
+          "procstep": {"type": ["string", "null"]}, "program": {"type": ["string", "null"]},
+          "status": {"enum": ["ok", "abend", "skipped", "unsupported", "not_run"]},
+          "rc": {"type": ["integer", "null"]}
+        }
+      }
+    },
+    "outputs": {"type": "object"},
+    "input_notes": {"type": "object"}
+  }
+}

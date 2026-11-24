@@ -1,0 +1,12 @@
+{
+  "type": "object",
+  "required": ["change_id", "changed", "unchanged", "excluded", "exclusion_reason", "status_changes"],
+  "properties": {
+    "change_id": {"type": ["string", "null"]},
+    "changed": {"type": "array", "items": {"type": "string"}},
+    "unchanged": {"type": "array", "items": {"type": "string"}},
+    "excluded": {"type": "boolean"},
+    "exclusion_reason": {"enum": [null, "compile_failure", "apply_failure", "cics_only"]},
+    "status_changes": {"type": "array", "items": {"type": "object"}}
+  }
+}

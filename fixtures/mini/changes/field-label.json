@@ -1,0 +1,16 @@
+{
+  "id": "M-label",
+  "class": "copybook_field",
+  "seed": null,
+  "summary": "MINICNST: MC-LABEL VALUE 'TOTAL' to 'TOTAX'",
+  "edits": [
+    {
+      "file": "app/cpy/MINICNST.cpy",
+      "line": 3,
+      "op": "replace",
+      "before": "           05  MC-LABEL           PIC X(8)   VALUE 'TOTAL'.",
+      "after": "           05  MC-LABEL           PIC X(8)   VALUE 'TOTAX'."
+    }
+  ],
+  "compile_break": false
+}

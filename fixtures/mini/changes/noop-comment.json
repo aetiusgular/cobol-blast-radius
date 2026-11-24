@@ -1,0 +1,16 @@
+{
+  "id": "M-noop",
+  "class": "noop",
+  "seed": null,
+  "summary": "MINIRPT: comment line inserted",
+  "edits": [
+    {
+      "file": "app/cbl/MINIRPT.cbl",
+      "line": 45,
+      "op": "insert_after",
+      "before": null,
+      "after": "      * reviewed: no functional change"
+    }
+  ],
+  "compile_break": false
+}

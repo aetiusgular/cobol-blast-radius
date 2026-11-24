@@ -1,0 +1,16 @@
+{
+  "id": "M-factor",
+  "class": "copybook_field",
+  "seed": null,
+  "summary": "MINICNST: MC-FACTOR VALUE 2 to 3",
+  "edits": [
+    {
+      "file": "app/cpy/MINICNST.cpy",
+      "line": 2,
+      "op": "replace",
+      "before": "           05  MC-FACTOR          PIC 9      VALUE 2.",
+      "after": "           05  MC-FACTOR          PIC 9      VALUE 3."
+    }
+  ],
+  "compile_break": false
+}

@@ -1,0 +1,48 @@
+{
+  "$comment": "Run set for the fixture app (contracts/runset.md). Paths are relative to fixtures/mini.",
+  "carddemo_commit": "fixture",
+  "clock": "2022/07/18 10:00:00",
+  "libraries": {
+    "MINI.PROC": {
+      "dir": "app/proc",
+      "ext": [
+        ".prc"
+      ]
+    }
+  },
+  "jobs": [
+    {
+      "job": "MINIJOB1",
+      "file": "app/jcl/MINIJOB1.jcl"
+    },
+    {
+      "job": "MINIJOB2",
+      "file": "app/jcl/MINIJOB2.jcl"
+    }
+  ],
+  "programs": [
+    "MINIRPT",
+    "MINISUM"
+  ],
+  "program_dirs": [
+    "app/cbl"
+  ],
+  "copy_dirs": [
+    "app/cpy"
+  ],
+  "utilities": {
+    "IDCAMS": "DEFINE GENERATIONDATAGROUP",
+    "SORT": "SORT FIELDS"
+  },
+  "stubs": {},
+  "inputs": [
+    {
+      "dsn": "MINI.INPUT.PS",
+      "path": "app/data/ASCII/mini.txt",
+      "encoding": "ascii",
+      "recfm": "F",
+      "lrecl": 25
+    }
+  ],
+  "excluded_jobs": []
+}

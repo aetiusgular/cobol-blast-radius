@@ -1,0 +1,244 @@
+{
+  "tests": [
+    {
+      "id": "F3-baseline-repeats",
+      "lane": "P3a",
+      "case": "F3: baseline is identical across two runs, and root is never written",
+      "cmd": "python3 -m unittest -q tests.red.test_p3a_harness.HarnessRed.test_baseline_repeats",
+      "expect": "NotImplementedError: groundtruth\\.harness\\.run",
+      "timeout": 600
+    },
+    {
+      "id": "F3-ebcdic-vs-ascii",
+      "lane": "P3a",
+      "case": "F3: EBCDIC cp037 input gives the same outputs as ASCII input",
+      "cmd": "python3 -m unittest -q tests.red.test_p3a_harness.HarnessRed.test_ebcdic_input_matches_ascii",
+      "expect": "NotImplementedError: groundtruth\\.harness\\.run",
+      "timeout": 600
+    },
+    {
+      "id": "F3-compile-failure-reported",
+      "lane": "P3a",
+      "case": "F3: a compile failure is reported and excludes the change, not hidden",
+      "cmd": "python3 -m unittest -q tests.red.test_p3a_harness.HarnessRed.test_compile_failure_reported",
+      "expect": "NotImplementedError: groundtruth\\.harness\\.run",
+      "timeout": 600
+    },
+    {
+      "id": "F3-byte-compare",
+      "lane": "P3a",
+      "case": "F3: outputs are compared by hash of their bytes; a missing output is changed",
+      "cmd": "python3 -m unittest -q tests.red.test_p3a_harness.HarnessRed.test_outputs_compared_byte_for_byte",
+      "expect": "NotImplementedError: groundtruth\\.diff\\.diff",
+      "timeout": 600
+    },
+    {
+      "id": "F3-sort-reaches-only-sorted",
+      "lane": "P3a",
+      "case": "F3: a JCL sort-order change changes MINI.SORTED and nothing after it",
+      "cmd": "python3 -m unittest -q tests.red.test_p3a_harness.HarnessRed.test_sort_order_change_reaches_only_sorted",
+      "expect": "NotImplementedError: groundtruth\\.harness\\.run",
+      "timeout": 600
+    },
+    {
+      "id": "F4-same-seed-same-change",
+      "lane": "P3a",
+      "case": "F4: the same seed gives the same change",
+      "cmd": "python3 -m unittest -q tests.red.test_p3a_generate.GenerateRed.test_same_seed_same_change",
+      "expect": "NotImplementedError: groundtruth\\.generate\\.generate",
+      "timeout": 600
+    },
+    {
+      "id": "F4-compiles-or-marked",
+      "lane": "P3a",
+      "case": "F4: each class gives a change that compiles or is marked compile_break",
+      "cmd": "python3 -m unittest -q tests.red.test_p3a_generate.GenerateRed.test_each_class_compiles_or_is_marked",
+      "expect": "NotImplementedError: groundtruth\\.generate\\.generate",
+      "timeout": 600
+    },
+    {
+      "id": "F4-apply-all-or-nothing",
+      "lane": "P3a",
+      "case": "F4: applying a change is all or nothing",
+      "cmd": "python3 -m unittest -q tests.red.test_p3a_generate.GenerateRed.test_apply_is_all_or_nothing",
+      "expect": "NotImplementedError: groundtruth\\.changes\\.apply",
+      "timeout": 600
+    },
+    {
+      "id": "F1-copy-replacing",
+      "lane": "P3b",
+      "case": "F1: COPY REPLACING",
+      "cmd": "python3 -m unittest -q tests.red.test_p3b_graph.GraphRed.test_copy_replacing_keeps_target",
+      "expect": "NotImplementedError: radius\\.graph\\.build",
+      "timeout": 600
+    },
+    {
+      "id": "F1-nested-copybooks",
+      "lane": "P3b",
+      "case": "F1: copybooks nested in copybooks",
+      "cmd": "python3 -m unittest -q tests.red.test_p3b_graph.GraphRed.test_nested_copybooks",
+      "expect": "NotImplementedError: radius\\.graph\\.build",
+      "timeout": 600
+    },
+    {
+      "id": "F1-proc-symbolics",
+      "lane": "P3b",
+      "case": "F1: PROC expansion and symbolic parameters",
+      "cmd": "python3 -m unittest -q tests.red.test_p3b_graph.GraphRed.test_proc_expansion_and_symbolics",
+      "expect": "NotImplementedError: radius\\.graph\\.build",
+      "timeout": 600
+    },
+    {
+      "id": "F1-gdg-relative",
+      "lane": "P3b",
+      "case": "F1: GDG relative generations (+1) and (0)",
+      "cmd": "python3 -m unittest -q tests.red.test_p3b_graph.GraphRed.test_gdg_relative_generations",
+      "expect": "NotImplementedError: radius\\.graph\\.build",
+      "timeout": 600
+    },
+    {
+      "id": "F1-noncompiling-nodes",
+      "lane": "P3b",
+      "case": "F1: programs that fail to compile still appear as nodes",
+      "cmd": "python3 -m unittest -q tests.red.test_p3b_graph.GraphRed.test_programs_that_fail_to_compile_are_nodes",
+      "expect": "NotImplementedError: radius\\.graph\\.build",
+      "timeout": 600
+    },
+    {
+      "id": "F2-field-vs-copybook",
+      "lane": "P3b",
+      "case": "F2: field-level change versus whole copybook",
+      "cmd": "python3 -m unittest -q tests.red.test_p3b_predict.PredictRed.test_field_level_not_whole_copybook",
+      "expect": "NotImplementedError: radius\\.predict\\.predict",
+      "timeout": 600
+    },
+    {
+      "id": "F2-unperformed-paragraph",
+      "lane": "P3b",
+      "case": "F2: a change only inside a paragraph that is never PERFORMed",
+      "cmd": "python3 -m unittest -q tests.red.test_p3b_predict.PredictRed.test_unperformed_paragraph_gives_empty_radius",
+      "expect": "NotImplementedError: radius\\.predict\\.predict",
+      "timeout": 600
+    },
+    {
+      "id": "F2-cross-job-datasets",
+      "lane": "P3b",
+      "case": "F2: datasets passed between jobs",
+      "cmd": "python3 -m unittest -q tests.red.test_p3b_predict.PredictRed.test_datasets_passed_between_jobs",
+      "expect": "NotImplementedError: radius\\.predict\\.predict",
+      "timeout": 600
+    },
+    {
+      "id": "F2-noop-empty",
+      "lane": "P3b",
+      "case": "F2: a no-op change gives an empty radius",
+      "cmd": "python3 -m unittest -q tests.red.test_p3b_predict.PredictRed.test_noop_gives_empty_radius",
+      "expect": "NotImplementedError: radius\\.predict\\.predict",
+      "timeout": 600
+    },
+    {
+      "id": "F2-e0-one-hop",
+      "lane": "P3b",
+      "case": "F2: the E0 one-hop baseline (SPEC.md headline table 5)",
+      "cmd": "python3 -m unittest -q tests.red.test_p3b_predict.PredictRed.test_e0_is_one_hop",
+      "expect": "NotImplementedError: radius\\.predict\\.predict_e0",
+      "timeout": 600
+    },
+    {
+      "id": "F5-strictest-wins",
+      "lane": "P3c",
+      "case": "F5: strictest rule wins, independent of order (contracts/allowlist.md)",
+      "cmd": "python3 -m unittest -q tests.red.test_p3c_allowlist.AllowlistRed.test_strictest_rule_wins_in_any_order",
+      "expect": "NotImplementedError: approval\\.allowlist\\.decide",
+      "timeout": 600
+    },
+    {
+      "id": "F5-pattern-dataset-and-member",
+      "lane": "P3c",
+      "case": "F5: a pattern matches both dataset names and members",
+      "cmd": "python3 -m unittest -q tests.red.test_p3c_allowlist.AllowlistRed.test_pattern_matches_datasets_and_members",
+      "expect": "NotImplementedError: approval\\.allowlist\\.decide",
+      "timeout": 600
+    },
+    {
+      "id": "F5-empty-asks",
+      "lane": "P3c",
+      "case": "F5: an empty allowlist means everything asks",
+      "cmd": "python3 -m unittest -q tests.red.test_p3c_allowlist.AllowlistRed.test_empty_allowlist_asks_everything",
+      "expect": "NotImplementedError: approval\\.allowlist\\.decide",
+      "timeout": 600
+    },
+    {
+      "id": "F6-verify-edited",
+      "lane": "P3c",
+      "case": "F6: verify catches an edited entry",
+      "cmd": "python3 -m unittest -q tests.red.test_p3c_ledger.LedgerRed.test_verify_catches_an_edited_entry",
+      "expect": "NotImplementedError: approval\\.ledger\\.Ledger\\.approve",
+      "timeout": 600
+    },
+    {
+      "id": "F6-verify-deleted",
+      "lane": "P3c",
+      "case": "F6: verify catches a deleted entry",
+      "cmd": "python3 -m unittest -q tests.red.test_p3c_ledger.LedgerRed.test_verify_catches_a_deleted_entry",
+      "expect": "NotImplementedError: approval\\.ledger\\.Ledger\\.approve",
+      "timeout": 600
+    },
+    {
+      "id": "F6-verify-reordered",
+      "lane": "P3c",
+      "case": "F6: verify catches a reordered entry",
+      "cmd": "python3 -m unittest -q tests.red.test_p3c_ledger.LedgerRed.test_verify_catches_a_reordered_entry",
+      "expect": "NotImplementedError: approval\\.ledger\\.Ledger\\.approve",
+      "timeout": 600
+    },
+    {
+      "id": "F6-revert-restores-bytes",
+      "lane": "P3c",
+      "case": "F6: revert restores the files byte for byte",
+      "cmd": "python3 -m unittest -q tests.red.test_p3c_ledger.LedgerRed.test_revert_restores_bytes",
+      "expect": "NotImplementedError: approval\\.ledger\\.Ledger\\.approve",
+      "timeout": 600
+    },
+    {
+      "id": "F6-revert-appends",
+      "lane": "P3c",
+      "case": "F6: revert appends an entry and never rewrites one",
+      "cmd": "python3 -m unittest -q tests.red.test_p3c_ledger.LedgerRed.test_revert_appends_and_never_rewrites",
+      "expect": "NotImplementedError: approval\\.ledger\\.Ledger\\.approve",
+      "timeout": 600
+    },
+    {
+      "id": "F6-cli-verify",
+      "lane": "P3c",
+      "case": "F6: the CLI runs verify and prints JSON",
+      "cmd": "python3 -m unittest -q tests.red.test_p3c_ledger.LedgerRed.test_cli_verify",
+      "expect": "NotImplementedError: approval\\.cli\\.main",
+      "timeout": 600
+    },
+    {
+      "id": "F7-row-fields",
+      "lane": "P3c",
+      "case": "F7: results rows carry the section 6 fields and micro-averaged scores",
+      "cmd": "python3 -m unittest -q tests.red.test_p3c_evalrun.EvalRunRed.test_rows_carry_section6_fields",
+      "expect": "NotImplementedError: approval\\.evalrun\\.run",
+      "timeout": 600
+    },
+    {
+      "id": "F7-machine-at-run-time",
+      "lane": "P3c",
+      "case": "F7: the machine is read at run time",
+      "cmd": "python3 -m unittest -q tests.red.test_p3c_evalrun.EvalRunRed.test_machine_read_at_run_time",
+      "expect": "NotImplementedError: approval\\.evalrun\\.machine",
+      "timeout": 600
+    },
+    {
+      "id": "F7-heldout-hash-refusal",
+      "lane": "P3c",
+      "case": "F7: heldout is refused when the split hash does not match",
+      "cmd": "python3 -m unittest -q tests.red.test_p3c_evalrun.EvalRunRed.test_heldout_refused_when_split_hash_differs",
+      "expect": "NotImplementedError: approval\\.evalrun\\.run",
+      "timeout": 600
+    }
+  ]
+}
