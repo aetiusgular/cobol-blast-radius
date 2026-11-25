@@ -2,8 +2,8 @@
   "project": "cobol-blast-radius",
   "code": "CB",
   "target": "Hypercubic",
-  "phase": "P3a",
-  "round": 1,
+  "phase": "P3b",
+  "round": 3,
   "phases": [
     "P1",
     "P2",
@@ -31,7 +31,8 @@
   "sessions_used": {
     "P1": 1,
     "P2": 1,
-    "P3a": 1
+    "P3a": 1,
+    "P3b": 2
   },
   "needs_box": [
     "P5"
