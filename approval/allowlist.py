@@ -90,6 +90,21 @@ def check_radius_covers(change, radius):
         raise RuleError(f"radius does not name the edited members {missing}")
 
 
+def check_radius_includes(radius, predicted):
+    """Raise RuleError unless `radius` names every member, program, job and dataset `predicted` does.
+
+    A supplied radius can widen the predicted one, which only makes the
+    decision stricter. One that leaves an item out (a stale or hand-edited
+    radius file) would let a rule on that item go unchecked, so it is refused.
+    """
+    missing = []
+    for kind, key in _ITEM_LISTS:
+        have = set(radius.get(key) or [])
+        missing += [f"{kind} {name}" for name in predicted.get(key) or [] if name not in have]
+    if missing:
+        raise RuleError(f"radius leaves out predicted items {missing}")
+
+
 def strictest(actions, default="ask"):
     actions = list(actions)
     return max(actions, key=_RANK.__getitem__) if actions else default

@@ -85,5 +85,18 @@ class RadiusCovers(unittest.TestCase):
                 allowlist.check_radius_covers(self.CH, bad)
 
 
+class RadiusIncludes(unittest.TestCase):
+    P = {"members": ["M"], "programs": ["P"], "jobs": ["J"], "datasets": ["A.B", "C.D"]}
+
+    def test_the_same_or_a_wider_radius_passes(self):
+        allowlist.check_radius_includes(dict(self.P), self.P)
+        allowlist.check_radius_includes(dict(self.P, datasets=["A.B", "C.D", "E.F"], programs=["P", "Q"]), self.P)
+
+    def test_a_radius_missing_any_predicted_item_is_refused(self):
+        for key in ("members", "programs", "jobs", "datasets"):
+            with self.assertRaises(allowlist.RuleError):
+                allowlist.check_radius_includes(dict(self.P, **{key: self.P[key][1:]}), self.P)
+
+
 if __name__ == "__main__":
     unittest.main()

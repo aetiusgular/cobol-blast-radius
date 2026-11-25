@@ -53,6 +53,8 @@ def _record(a, rules):
     change = _json(a.change)
     radius = _radius(a)
     allowlist.check_radius_covers(change, radius)
+    if getattr(a, "radius", None):  # CB-P3c-r2-S1: a supplied radius may widen the predicted one, never narrow it
+        allowlist.check_radius_includes(radius, _predictor(False)(change, Path(a.root), _json(a.runset)))
     return {"change": change, "radius": radius, "decision": allowlist.decide(radius, rules),
             "decided_by": a.by, "note": a.note or ""}
 

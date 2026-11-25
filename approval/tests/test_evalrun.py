@@ -203,6 +203,26 @@ class CliUnit(unittest.TestCase):
         code, doc, _ = self.cli("approve", "--change", c, "--allowlist", rules, *self.common())
         self.assertEqual((code, doc["refused"]), (4, "deny"))
 
+    def test_a_supplied_radius_must_include_the_predicted_items(self):
+        # CB-P3c-r2-S1: a radius file that kept the edited member but dropped a denied dataset was applied as allow.
+        c = MINI / "changes" / "field-label.json"
+        before = (self.root / "app/cpy/MINICNST.cpy").read_bytes()
+        code, radius, _ = self.cli("predict", "--change", c, "--root", self.root, "--runset", MINI / "runset.json")
+        self.assertIn("MINI.SUMFILE", radius["datasets"])
+        rules = self.rules([{"pattern": "MINI.SUMFILE", "kind": "dataset", "action": "deny"}, {"pattern": "**", "action": "allow"}])
+        narrow = dict(radius, programs=[], jobs=[], datasets=[], why={})
+        rp = self.tmp / "narrow.json"
+        rp.write_text(json.dumps(narrow))
+        code, doc, err = self.cli("approve", "--change", c, "--radius", rp, "--allowlist", rules, *self.common())
+        self.assertEqual((code, doc), (2, None))
+        self.assertIn("predicted items", json.loads(err)["error"])
+        self.assertEqual((self.root / "app/cpy/MINICNST.cpy").read_bytes(), before)
+        self.assertFalse((self.tmp / "led" / "ledger.jsonl").exists())
+        wide = self.tmp / "wide.json"
+        wide.write_text(json.dumps(dict(radius, datasets=radius["datasets"] + ["EXTRA.DS"])))
+        code, doc, _ = self.cli("approve", "--change", c, "--radius", wide, "--allowlist", rules, *self.common())
+        self.assertEqual((code, doc["refused"]), (4, "deny"))
+
     def test_predicted_radii_name_their_edited_members(self):
         from approval import allowlist
         from radius import predict as rp
