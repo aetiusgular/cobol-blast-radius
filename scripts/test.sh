@@ -15,4 +15,8 @@ for pkg in groundtruth radius approval; do
     python3 -m unittest discover -s "$pkg/tests" -t . -p 'test_*.py'
   fi
 done
+echo "== cross-lane tests (P4)"
+if [[ -d tests/integration ]]; then
+  python3 -m unittest discover -s tests/integration -t . -p 'test_*.py'
+fi
 echo "test.sh: ok"

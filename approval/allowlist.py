@@ -105,6 +105,45 @@ def check_radius_includes(radius, predicted):
         raise RuleError(f"radius leaves out predicted items {missing}")
 
 
+def _git_head(root):
+    """The tree's git HEAD when `root` is the top of its own checkout, else None."""
+    import subprocess
+    try:
+        top = subprocess.run(["git", "-c", "core.fsmonitor=false", "-C", str(root), "rev-parse", "--show-toplevel", "HEAD"],
+                             capture_output=True, text=True, timeout=30)
+    except (OSError, subprocess.SubprocessError):
+        return None
+    lines = top.stdout.split()
+    if top.returncode != 0 or len(lines) != 2 or Path(lines[0]).resolve() != Path(root).resolve():
+        return None
+    return lines[1]
+
+
+def check_runset_fits(runset, root):
+    """Raise RuleError unless `runset` describes the tree at `root` (allowlist.md, CB-P3c-r3-S1).
+
+    The predictor only follows the jobs and programs the run set names. A run
+    set for another tree finds none of them and predicts a narrower radius,
+    which would let a rule on a dataset go unchecked, so it is refused.
+    """
+    root = Path(root)
+    problems = []
+    for j in runset.get("jobs") or []:
+        if not (root / str(j.get("file", ""))).is_file():
+            problems.append(f"job {j.get('job')} ({j.get('file')})")
+    dirs = runset.get("program_dirs") or []
+    for prog in runset.get("programs") or []:
+        if not any((root / d / f"{prog}{ext}").is_file()
+                   for d in dirs for ext in (".cbl", ".CBL", ".cob", ".COB")):
+            problems.append(f"program {prog}")
+    if problems:
+        raise RuleError(f"run set does not describe {root}: missing {problems[:5]}"
+                        + (f" and {len(problems) - 5} more" if len(problems) > 5 else ""))
+    want, head = runset.get("carddemo_commit"), _git_head(root)
+    if head and want and want != head:
+        raise RuleError(f"run set is for commit {want}, {root} is at {head}")
+
+
 def strictest(actions, default="ask"):
     actions = list(actions)
     return max(actions, key=_RANK.__getitem__) if actions else default

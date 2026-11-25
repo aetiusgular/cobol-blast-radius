@@ -1,8 +1,8 @@
 {
   "$comment": "The batch run set the ground-truth harness (P3a) executes, in order, and the predictor (P3b) reasons over. Format in contracts/runset.md. Paths are relative to the CardDemo root unless `from` is `repo`.",
   "carddemo_commit": "59cc6c2fd7ebd7ef7925cad552a01a4b8b6e4d5e",
-  "clock": "2022/07/18 10:00:00",
-  "cobc_flags": ["-std=ibm"],
+  "clock": "2022/07/01 10:00:00.00",
+  "cobc_flags": ["-std=ibm", "-fsign=EBCDIC"],
   "libraries": {
     "AWS.M2.CARDDEMO.PROC": {"dir": "app/proc", "ext": [".prc", ".PRC"]},
     "AWS.M2.CARDDEMO.CNTL": {"dir": "app/ctl", "ext": [".ctl", ".CTL"]}

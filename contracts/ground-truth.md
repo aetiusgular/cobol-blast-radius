@@ -14,6 +14,9 @@ What `groundtruth.harness.run(root, runset, workdir, change=None)` returns for o
 | `steps` | Every step in run order: `{"job", "step", "procstep", "program", "status", "rc"}`. `status` is `ok`, `abend`, `skipped` (SDSF, or a COND test), `unsupported` (outside the step-runner subset), or `not_run` (its program did not compile, or an earlier step in the job ended the job). |
 | `outputs` | For each output dataset name (see `runset.md`): `{"sha256": "<of the canonical bytes>" or null when absent, "bytes": int, "generations": int}`. |
 | `input_notes` | Lines padded, truncated or converted, per input. |
+| `apply_error` | `null`, or the reason the change did not apply (an edit's `before` did not match). When set, nothing was built or run. `diff` reads it for `apply_failure`. |
+| `cics_only` | `true` when no edited file is a run-set job, PROC or control member, a run-set program, or a copybook a run-set program COPYs (nested COPYs included), and CICS programs reach every edited file. `diff` reads it for `cics_only`. |
+| `notes` | Human-readable lines about steps that did not end `ok` (JCL errors, abends, harness limits). Not compared. |
 
 Two baseline runs on the same machine must give identical `compile`, `steps` and `outputs`.
 

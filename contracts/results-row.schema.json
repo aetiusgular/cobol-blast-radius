@@ -23,6 +23,24 @@
     "excluded": {"type": "boolean"},
     "exclusion_reason": {"type": ["string", "null"]},
     "recall": {"type": ["number", "null"]},
-    "precision": {"type": ["number", "null"]}
+    "precision": {"type": ["number", "null"]},
+    "git_dirty": {"type": "boolean"},
+    "split_matches_contract": {"type": "boolean"},
+    "predicted_outside_universe": {"type": ["array", "integer"]},
+    "true_positive": {"type": "array"},
+    "false_positive": {"type": "array"},
+    "false_negative": {"type": "array"},
+    "unverifiable": {"type": "array"},
+    "status_changes": {"type": "array"},
+    "predict_error": {"type": ["string", "null"]},
+    "changes": {"type": "integer"},
+    "scored": {"type": "integer"},
+    "changed_count": {"type": "integer"},
+    "predicted_count": {"type": "integer"},
+    "hits": {"type": "integer"},
+    "per_class": {"type": "object"},
+    "noop": {"type": "object"},
+    "excluded_by_reason": {"type": "object"},
+    "predict_errors": {"type": "integer"}
   }
 }

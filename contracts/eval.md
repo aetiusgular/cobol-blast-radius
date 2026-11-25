@@ -37,6 +37,6 @@ A `noop` change with empty `changed` and empty `predicted` adds nothing to eithe
 
 ## Rows (`results-row.schema.json`)
 
-One row per (run, change) in `results/E<k>-<split>.jsonl`, plus one summary row per run. Every row carries the section 6 fields (`run_id`, `git_sha`, `machine` read at run time, `model_revision`, `quant`, `runtime`, `date`), and also `carddemo_commit`, `cobc_version`, `split`, `split_sha256` and `predictor`.
+One row per (run, change) in `results/E<k>-<split>.jsonl`, plus one summary row per run. The runner appends to that file and never truncates it, so a repeat run sits beside the first. A run stops, and writes no row, when a run-set program does not compile in the baseline: every diff would then be empty and the score meaningless. Every row carries the section 6 fields (`run_id`, `git_sha`, `machine` read at run time, `model_revision`, `quant`, `runtime`, `date`), and also `carddemo_commit`, `cobc_version`, `split`, `split_sha256` and `predictor`.
 
 `machine` is read at run time: the contents of `$FORGE_MACHINE_FILE` when that variable is set (the box), otherwise `<cpu model from /proc/cpuinfo>|<MemTotal in GiB from /proc/meminfo>|<nvidia-smi GPU name, or "no GPU">`.

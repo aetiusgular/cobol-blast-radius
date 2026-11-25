@@ -35,7 +35,8 @@ These are places where this ground truth can differ from z/OS. They are listed s
 - SORT compares bytes in the data's own code. The run set's data is ASCII, so CH fields sort in ASCII order, not EBCDIC order.
 - Utility messages (IDCAMS and SORT SYSPRINT) are the harness's own and are not outputs, per the contract.
 - An unsupported statement ends its step with status `unsupported` and a note. The harness never guesses.
-- Sign convention and clock: see Requests for integration in the P3a PR (`-fsign=EBCDIC`, and a clock inside TRANREPT's date window). Until P4 decides, the harness runs exactly what `contracts/runset.json` says.
+- Sign convention and clock: P4 accepted both Requests for integration. `contracts/runset.json` now has `-fsign=EBCDIC` in `cobc_flags` and the clock `2022/07/01 10:00:00.00`, inside TRANREPT's date window (`results/P4-runset-rfi.jsonl`). The harness still runs exactly what the run set says.
+- Output cap (P4, SECURITY.md G-2): a step's program may write no file larger than `STEP_FILE_CAP` (256 MiB, `RLIMIT_FSIZE`). Its stdout and stderr go to files under the step folder, so the cap covers them too. A program past the cap gets SIGXFSZ, and the step is an `abend` with an `output cap` note.
 
 ## What ran (P3a)
 
