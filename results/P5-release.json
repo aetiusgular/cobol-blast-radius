@@ -1,0 +1,18 @@
+{
+  "code_digest": "548bcf693398edd4b2b9a38d5bf99d7ca46f680e25a1fd6394442387f226ff93",
+  "code_paths": [
+    "groundtruth",
+    "radius",
+    "approval",
+    "contracts",
+    "fixtures",
+    "scripts"
+  ],
+  "git_sha": "9a4cd08272168da684a4f6f63d146ed22e550d7b",
+  "runs": {
+    "E0-dev": "2026-11-25-7e3247468869",
+    "E0-heldout": "2026-11-25-6575fbf03a54",
+    "E1-dev": "2026-11-25-feb2bc8ff724",
+    "E1-heldout": "2026-11-25-27739e5f37d7"
+  }
+}
