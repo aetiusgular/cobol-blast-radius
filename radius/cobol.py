@@ -5,6 +5,7 @@ file and line it came from, so an edited line can be traced to the data item
 or statement it belongs to after COPY expansion.
 """
 import re
+from bisect import bisect_left
 from dataclasses import dataclass, field
 
 from radius.source import COPY_EXTS, member_of
@@ -571,6 +572,8 @@ class Stmt:
     terminates: bool = False
     abend: bool = False
     calls: list = field(default_factory=list)
+    sentence: int = 0                          # index of the sentence (period-ended) in its paragraph
+    next_sentence: bool = False                # NEXT SENTENCE: jumps past the period that ends the sentence
 
     @property
     def lines(self):
@@ -814,6 +817,10 @@ class Program:
         for p in self.paras:
             seg = next(s for (n, sec, s) in segs if n == p.name and sec == p.section)
             self._parse_stmts(p, seg)
+            periods = [k for k, t in enumerate(seg) if t.kind == "period"]
+            pos = {id(t): k for k, t in enumerate(seg)}
+            for st in p.stmts:
+                st.sentence = bisect_left(periods, pos.get(id(st.toks[0]), 0)) if st.toks else 0
 
     def _targets_of(self, name):
         if name in self.sections and name not in self.para_index:
@@ -1150,7 +1157,9 @@ class Program:
                 tg = self._targets_of(nme)
                 if tg:
                     st.goto.append(tg[0])
-        elif v in ("CONTINUE", "EXIT", "NEXT"):
+        elif v == "NEXT":
+            st.next_sentence = bool(ops) and ops[0].text == "SENTENCE"
+        elif v in ("CONTINUE", "EXIT"):
             pass
         else:
             refs = R(ops)
@@ -1299,6 +1308,7 @@ def analyse(prog, taint, seeded, ctx_seed=(), all_out=False):
     sinks = {}
     flags = {"terminates": False, "abend": False}
     cond_hot = set()
+    forced = set()   # statements in a sentence that a hot NEXT SENTENCE may cut short
 
     def chot(c):
         if c is None:
@@ -1316,7 +1326,14 @@ def analyse(prog, taint, seeded, ctx_seed=(), all_out=False):
         changed = False
         rounds += 1
         for s in stmts:
-            ctrl = s in seeded or s.para in ctx or any(chot(c) for c in s.controls)
+            ctrl = s in seeded or s in forced or s.para in ctx or any(chot(c) for c in s.controls)
+            if ctrl and s.next_sentence:
+                # NEXT SENTENCE leaves the sentence, an enclosing inline PERFORM loop included,
+                # so whether any statement of that sentence runs (again) depends on it.
+                for o in prog.paras[s.para].stmts:
+                    if o.sentence == s.sentence and o not in forced:
+                        forced.add(o)
+                        changed = True
             if s in seeded and s.own is not None and id(s.own) not in cond_hot:
                 cond_hot.add(id(s.own))
                 changed = True

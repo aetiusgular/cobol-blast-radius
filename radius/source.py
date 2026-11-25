@@ -107,7 +107,8 @@ class Tree:
             return self.overlay[rel]
         if rel not in self._cache:
             p = self.root / rel
-            self._cache[rel] = p.read_text(encoding="utf-8", errors="replace") if p.is_file() else None
+            inside = p.resolve().is_relative_to(self.root.resolve())
+            self._cache[rel] = p.read_text(encoding="utf-8", errors="replace") if inside and p.is_file() else None
         return self._cache[rel]
 
     def exists(self, rel):

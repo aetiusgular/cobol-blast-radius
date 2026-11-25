@@ -19,14 +19,15 @@ E0 is the naive baseline: every output of every run-set job that runs a program 
 
 - The analysis ignores statement order. A value that is stored and then always overwritten before anyone reads it (for example `MOVE 8 TO APPL-RESULT` just before an OPEN that resets it) still counts. That costs precision, not recall.
 - A dataset stays changed once it is changed, even if a later step deletes and redefines it. A GDG base must work that way, because its earlier generations remain. A plain dataset that is rebuilt from clean inputs is over-reported.
+- `NEXT SENTENCE` under a changed condition makes every statement of its sentence controlled, the enclosing inline PERFORM included, because it jumps past the period and out of the loop (review CB-P3b-r1-C1).
 - The predictor does not model whether a changed path runs on the shipped data. SPEC.md table 3 ("reachable but unchanged") measures this.
 - WRITE status depends only on key bytes for indexed files and on nothing for sequential ones. A data-dependent I/O error (for example, a duplicate key caused by non-key bytes) is not modelled.
 - DISPLAY output is attributed to the step's `SYSOUT` DD. A step with no `SYSOUT DD SYSOUT=*` has no SYSOUT output.
 
 ## What ran (P3b, 2026-11-24, on the session's Linux workstation)
 
-- `bash scripts/test.sh`: contracts, isolation and every lane's unit tests pass, the 19 in `radius/tests/` included.
+- `bash scripts/test.sh`: contracts, isolation and every lane's unit tests pass, the 21 in `radius/tests/` included (19 in round 1, plus 2 added in review round 2).
 - `bash scripts/forge-gate.sh P3b`: P3a's and P3b's red tests are green, P3c's fail for their stated reason, lane-scope is clean, and the split hash matches.
 - `radius.graph.build` on CardDemo at the pinned commit parses all 31 programs and 38 job files with `errors == []`.
-- A crash sweep in the session scratchpad, not committed: 186 synthetic one-line edits across the run-set jobs, programs, two copybooks, REPROC and REPROCT. Each went through both predictors, and none raised or broke the schema.
+- A crash sweep in the session scratchpad, not committed and with no results row: synthetic one-line edits across the run-set jobs, programs, two copybooks, REPROC and REPROCT. Each went through both predictors, and none raised or broke the schema.
 - The 20 dev rows were predicted and inspected for plausibility. No ground truth was compared, and no harness run was made from this lane: eval rule 3 runs E0 before any tuning is recorded, and that happens in P5.

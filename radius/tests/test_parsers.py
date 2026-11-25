@@ -37,6 +37,18 @@ class SourceTest(unittest.TestCase):
         self.assertEqual((b, a, mm), ({3}, {4}, 0))
         self.assertIn("PGM=Z", new)
 
+    def test_tree_reads_nothing_outside_its_root(self):
+        import tempfile
+        from pathlib import Path
+        with tempfile.TemporaryDirectory() as d:
+            (Path(d) / "secret.txt").write_text("x\n")
+            (Path(d) / "root" / "app").mkdir(parents=True)
+            (Path(d) / "root" / "app" / "in.txt").write_text("y\n")
+            t = Tree(Path(d) / "root")
+            self.assertEqual(t.read("app/in.txt"), "y\n")
+            self.assertIsNone(t.read("../secret.txt"))
+            self.assertIsNone(t.read(str(Path(d) / "secret.txt")))
+
     def test_norm_line_kinds(self):
         self.assertIsNone(norm_line("jcl", "//* comment"))
         self.assertIsNone(norm_line("ctl", "/* licence */"))
@@ -129,6 +141,20 @@ class CobolTest(unittest.TestCase):
         sinks, flags = cobol.analyse(p, tn, set())
         self.assertTrue(flags["terminates"])
         self.assertEqual(sinks, {"SYSOUT": "shape"})
+
+    def test_hot_next_sentence_controls_its_whole_sentence(self):
+        # NEXT SENTENCE jumps past the period, out of the inline PERFORM too, so a changed
+        # condition around it decides whether the rest of the loop body runs (CB-P3b-r1-C1).
+        p = self._prog("MAIN-PARA.", "    PERFORM UNTIL N = 9", "        IF F-ON", "            CONTINUE",
+                       "        ELSE", "            NEXT SENTENCE", "        END-IF", "        DISPLAY G1",
+                       "    END-PERFORM.", "    STOP RUN.")
+        tn = cobol.Taint()
+        tn.conds88.add(p.by_name["F-ON"][0])
+        sinks, flags = cobol.analyse(p, tn, set())
+        self.assertEqual(sinks, {"SYSOUT": "shape"})
+        self.assertFalse(flags["terminates"])
+        sinks, _ = cobol.analyse(p, cobol.Taint(), set())
+        self.assertEqual(sinks, {})
 
 
 class JclTest(unittest.TestCase):
