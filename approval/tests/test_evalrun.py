@@ -106,6 +106,13 @@ class EvalUnit(unittest.TestCase):
         self.assertEqual(strip(first), strip(second))  # eval.md rule 4: a repeat run is identical
         self.assertNotEqual(first[0]["run_id"], second[0]["run_id"])
 
+    def test_rows_come_from_the_bytes_that_were_hashed(self):
+        p = self.tmp / "split.jsonl"
+        p.write_text(json.dumps(dict(ch("other", "noop"), split="dev")) + "\n")
+        data = (json.dumps(dict(ch("hashed", "noop"), split="dev")) + "\n").encode()
+        self.assertEqual([c["id"] for c in evalrun.load_split(p, "dev", data)], ["hashed"])
+        self.assertEqual([c["id"] for c in evalrun.load_split(p, "dev")], ["other"])
+
     def test_a_dev_run_on_another_file_is_marked(self):
         predict, truth = fakes({"c": ([], [], [], None)})
         rows = evalrun.run("dev", self.split([ch("c", "noop")]), CONTRACTS / "eval.md", MINI, RUNSET,
@@ -177,6 +184,32 @@ class CliUnit(unittest.TestCase):
         self.assertEqual(self.cli("verify", "--ledger", self.tmp / "led")[0], 0)
         code, doc, _ = self.cli("verify", "--ledger", self.tmp / "led", "--expect-head", head)
         self.assertEqual((code, doc["ok"]), (1, False))
+
+    def test_a_supplied_radius_must_name_the_edited_members(self):
+        # CB-P3c-r1-S1: a radius file without the edited member let a deny rule on it go unchecked.
+        c = MINI / "changes" / "field-label.json"
+        before = (self.root / "app/cpy/MINICNST.cpy").read_bytes()
+        code, radius, _ = self.cli("predict", "--change", c, "--root", self.root, "--runset", MINI / "runset.json")
+        self.assertEqual((code, radius["members"]), (0, ["MINICNST"]))
+        radius["members"] = []
+        rp = self.tmp / "radius.json"
+        rp.write_text(json.dumps(radius))
+        rules = self.rules([{"pattern": "MINICNST", "kind": "member", "action": "deny"}, {"pattern": "**", "action": "allow"}])
+        code, doc, err = self.cli("approve", "--change", c, "--radius", rp, "--allowlist", rules, *self.common())
+        self.assertEqual((code, doc), (2, None))
+        self.assertIn("edited members", json.loads(err)["error"])
+        self.assertEqual((self.root / "app/cpy/MINICNST.cpy").read_bytes(), before)
+        self.assertFalse((self.tmp / "led" / "ledger.jsonl").exists())
+        code, doc, _ = self.cli("approve", "--change", c, "--allowlist", rules, *self.common())
+        self.assertEqual((code, doc["refused"]), (4, "deny"))
+
+    def test_predicted_radii_name_their_edited_members(self):
+        from approval import allowlist
+        from radius import predict as rp
+        for p in sorted((MINI / "changes").glob("*.json")):
+            ch = json.loads(p.read_text())
+            for fn in (rp.predict, rp.predict_e0):
+                allowlist.check_radius_covers(ch, fn(ch, self.root, json.loads((MINI / "runset.json").read_text())))
 
     def test_errors_go_to_stderr_with_exit_2(self):
         code, doc, err = self.cli("revert", "--ledger", self.tmp / "led", "--seq", 1, "--root", self.root)

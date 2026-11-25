@@ -105,9 +105,11 @@ def file_hash(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
-def load_split(split_path, split):
+def load_split(split_path, split, data=None):
+    """The changes of `split` in the split file, parsed from `data` (its bytes) when given."""
+    text = (Path(split_path).read_bytes() if data is None else data).decode("utf-8")
     rows = []
-    for ln in Path(split_path).read_text().splitlines():
+    for ln in text.splitlines():
         if ln.strip():
             ch = json.loads(ln)
             if ch.get("split") == split:
@@ -176,10 +178,11 @@ def run(split, split_path, eval_doc, root, runset, out_path, predict, ground_tru
     if split not in SPLITS:
         raise ValueError(f"split must be one of {SPLITS}")
     frozen = frozen_hash(eval_doc)
-    actual = file_hash(split_path)
+    data = Path(split_path).read_bytes()  # read once: the rows scored are the bytes hashed
+    actual = hashlib.sha256(data).hexdigest()
     if split == "heldout" and actual != frozen:
         raise SplitHashMismatch(f"{split_path} hashes to {actual}, {eval_doc} freezes {frozen}")
-    changes = load_split(split_path, split)
+    changes = load_split(split_path, split, data)
 
     date = datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds")
     sha, dirty = git_state()

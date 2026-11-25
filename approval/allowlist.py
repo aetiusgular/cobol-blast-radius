@@ -67,6 +67,29 @@ def load_rules(path):
     return doc["rules"]
 
 
+def edited_members(change):
+    """The members a change's edits touch (radius.md: `app/cpy/CVACT01Y.cpy` gives `CVACT01Y`)."""
+    out = set()
+    for e in change.get("edits") or []:
+        name = str(e.get("file", "")).replace("\\", "/").rsplit("/", 1)[-1]
+        out.add((name.rsplit(".", 1)[0] if "." in name else name).upper())
+    return sorted(out)
+
+
+def check_radius_covers(change, radius):
+    """Raise RuleError unless `radius` is for `change` and names every member its edits touch.
+
+    allowlist.md makes the edited members items of every decision. A radius
+    that leaves one out (a stale or hand-edited radius file) would let a rule
+    on that member go unchecked, so it is refused rather than decided.
+    """
+    if radius.get("change_id") != change.get("id"):
+        raise RuleError(f"radius is for {radius.get('change_id')!r}, change is {change.get('id')!r}")
+    missing = sorted(set(edited_members(change)) - set(radius.get("members") or []))
+    if missing:
+        raise RuleError(f"radius does not name the edited members {missing}")
+
+
 def strictest(actions, default="ask"):
     actions = list(actions)
     return max(actions, key=_RANK.__getitem__) if actions else default

@@ -52,8 +52,7 @@ def _record(a, rules):
     from approval import allowlist
     change = _json(a.change)
     radius = _radius(a)
-    if radius.get("change_id") != change.get("id"):
-        raise ValueError(f"radius is for {radius.get('change_id')!r}, change is {change.get('id')!r}")
+    allowlist.check_radius_covers(change, radius)
     return {"change": change, "radius": radius, "decision": allowlist.decide(radius, rules),
             "decided_by": a.by, "note": a.note or ""}
 

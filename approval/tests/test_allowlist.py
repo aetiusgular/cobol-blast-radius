@@ -72,5 +72,18 @@ class Decide(unittest.TestCase):
                 allowlist.decide(radius(), bad)
 
 
+class RadiusCovers(unittest.TestCase):
+    CH = {"id": "T", "edits": [{"file": "app/cpy/CVACT01Y.cpy"}, {"file": "app/jcl/readacct.jcl"}]}
+
+    def test_edited_members(self):
+        self.assertEqual(allowlist.edited_members(self.CH), ["CVACT01Y", "READACCT"])
+
+    def test_a_radius_must_name_every_edited_member(self):
+        allowlist.check_radius_covers(self.CH, radius(members=["CVACT01Y", "READACCT"]))
+        for bad in (radius(members=["READACCT"]), radius(members=[]), radius(change_id="U", members=["CVACT01Y", "READACCT"])):
+            with self.assertRaises(allowlist.RuleError):
+                allowlist.check_radius_covers(self.CH, bad)
+
+
 if __name__ == "__main__":
     unittest.main()
