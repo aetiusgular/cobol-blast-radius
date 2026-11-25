@@ -156,6 +156,32 @@ class CobolTest(unittest.TestCase):
         sinks, _ = cobol.analyse(p, cobol.Taint(), set())
         self.assertEqual(sinks, {})
 
+    def test_removed_jump_controls_what_it_skipped(self):
+        # CB-P3b-r2-C1: deleting a NEXT SENTENCE or a GO TO changes which statements run.
+        import tempfile
+        from pathlib import Path
+        from radius import predict
+        head = ["IDENTIFICATION DIVISION.", "PROGRAM-ID. P.", "DATA DIVISION.", "WORKING-STORAGE SECTION.",
+                "01 N PIC 9.", "01 G1 PIC X.", "PROCEDURE DIVISION."]
+        cases = {
+            "NEXT SENTENCE": ["MAIN-PARA.", "    PERFORM UNTIL N = 9", "        IF N = 1", "            CONTINUE",
+                              "        ELSE", "            NEXT SENTENCE", "        END-IF", "        DISPLAY G1",
+                              "    END-PERFORM.", "    STOP RUN."],
+            "GO TO": ["MAIN-PARA.", "    GO TO DONE-PARA.", "    DISPLAY G1.", "DONE-PARA.", "    STOP RUN."],
+        }
+        for jump, proc in cases.items():
+            with self.subTest(jump), tempfile.TemporaryDirectory() as d:
+                (Path(d) / "app" / "cbl").mkdir(parents=True)
+                text = cbl(*head, *proc)
+                (Path(d) / "app" / "cbl" / "P.cbl").write_text(text)
+                lines = text.split("\n")
+                n = next(i for i, l in enumerate(lines) if jump in l) + 1
+                after = "           CONTINUE" if jump == "NEXT SENTENCE" else "           CONTINUE."
+                ch = {"edits": [{"file": "app/cbl/P.cbl", "line": n, "op": "replace", "before": lines[n - 1], "after": after}]}
+                sides = predict.Sides(ch, d, {"jobs": []})
+                sinks, _, _ = predict.ProgramSeed(sides, "P").run()
+                self.assertEqual(sinks.get("SYSOUT"), "shape")
+
 
 class JclTest(unittest.TestCase):
     def test_continuation_concatenation_instream_and_gdg(self):

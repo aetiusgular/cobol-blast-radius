@@ -82,6 +82,14 @@ class CardDemoPredict(unittest.TestCase):
         self.assertNotIn("AWS.M2.CARDDEMO.ACCTDATA.PSCOMP", r["datasets"])
         self.assertIn("COMBTRAN.STEP05R", r["steps"])
 
+    def test_removed_next_sentence_reaches_the_report(self):
+        # CBTRN03C.cbl:177: NEXT SENTENCE leaves the read loop for records outside the date
+        # window. Replacing it lets them through to the report (CB-P3b-r2-C1).
+        r = predict.predict(edit("app/cbl/CBTRN03C.cbl", "NEXT SENTENCE", "CONTINUE     "), CARDDEMO, RUNSET)
+        self.check(r)
+        self.assertIn("AWS.M2.CARDDEMO.TRANREPT", r["datasets"])
+        self.assertIn("SYSOUT:TRANREPT.STEP10R.SYSOUT", r["datasets"])
+
     def test_copybook_field_reaches_cics_as_unverifiable(self):
         r = predict.predict(edit("app/cpy/CVACT01Y.cpy", "ACCT-CURR-BAL", "ACCT-CURR-BAX"), CARDDEMO, RUNSET)
         self.assertEqual(r["fields"], ["CVACT01Y.ACCT-CURR-BAL", "CVACT01Y.ACCT-CURR-BAX"])

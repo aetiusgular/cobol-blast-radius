@@ -173,6 +173,21 @@ class ProgramSeed:
                         self.flags["terminates"] = True
                     if s.abend:
                         self.flags["abend"] = True
+                    # A removed jump changes what runs after it (CB-P3b-r2-C1). NEXT SENTENCE:
+                    # the rest of its sentence, an enclosing inline PERFORM included, as on the
+                    # after side. GO TO: the rest of its paragraph and the paragraphs it reached.
+                    nm = B.paras[s.para].name
+                    if (s.next_sentence or s.goto) and nm in A.para_index:
+                        ak = A.para_index[nm]
+                        if s.goto:
+                            self.ctx.add(ak)
+                        else:
+                            self.seeded.update(o for o in A.paras[ak].stmts if o.sentence == s.sentence)
+                    for g in s.goto:
+                        if B.paras[g].name in A.para_index:
+                            self.ctx.add(A.para_index[B.paras[g].name])
+                    if s.goto:
+                        self.flags["terminates"] = True
         # changes outside data items and statements: SELECT, headers, PROGRAM-ID
         for t in A.toks:
             if t.where in ap and t.where not in explained:
