@@ -52,7 +52,7 @@ def main():
     run_id = f"P4-runset-rfi-{date[:10]}-{uuid.uuid4().hex[:8]}"
     rows = []
     for name, over in CONFIGS:
-        rs = committed if over is None else dict(copy.deepcopy(committed), **BEFORE, **over)
+        rs = committed if over is None else {**copy.deepcopy(committed), **BEFORE, **over}
         r = harness.run(root, rs, work / name)
         n, reasons = rejects(work / name / "ds")
         o = r["outputs"]
