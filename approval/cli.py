@@ -15,6 +15,7 @@ Every command prints one JSON document on stdout. Errors print
            [--split-path P] [--root R] [--runset S] [--workdir W]
 """
 import argparse
+import hashlib
 import json
 import sys
 import tempfile
@@ -51,12 +52,29 @@ def _radius(a):
 def _record(a, rules):
     from approval import allowlist
     change = _json(a.change)
+    runset_bytes = Path(a.runset).read_bytes()
+    runset = json.loads(runset_bytes)
+    allowlist.check_runset_fits(runset, Path(a.root))  # CB-P3c-r3-S1: a run set for another tree narrows the radius
     radius = _radius(a)
     allowlist.check_radius_covers(change, radius)
     if getattr(a, "radius", None):  # CB-P3c-r2-S1: a supplied radius may widen the predicted one, never narrow it
-        allowlist.check_radius_includes(radius, _predictor(False)(change, Path(a.root), _json(a.runset)))
+        allowlist.check_radius_includes(radius, _predictor(False)(change, Path(a.root), runset))
     return {"change": change, "radius": radius, "decision": allowlist.decide(radius, rules),
-            "decided_by": a.by, "note": a.note or ""}
+            "decided_by": a.by, "note": a.note or "",
+            "runset_sha256": hashlib.sha256(runset_bytes).hexdigest(),
+            "applied_as": _account()}
+
+
+def _account():
+    """The OS account running the CLI, from the effective uid, never from $USER (SECURITY.md A-2)."""
+    import os
+    import pwd
+    uid = os.geteuid()
+    try:
+        name = pwd.getpwuid(uid).pw_name
+    except KeyError:
+        name = None
+    return {"uid": uid, "user": name}
 
 
 def cmd_predict(a):

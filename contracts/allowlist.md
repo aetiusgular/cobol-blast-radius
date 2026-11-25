@@ -30,4 +30,8 @@
 
 ## Approval record
 
-The record the ledger stores for one decision: `{"change": <change>, "radius": <radius>, "decision": <decision>, "decided_by": "<who>", "note": "<free text>"}`. A `deny` decision is recorded but its change is never applied.
+The record the ledger stores for one decision: `{"change": <change>, "radius": <radius>, "decision": <decision>, "decided_by": "<who>", "note": "<free text>", "runset_sha256": "<sha256 of the run-set file the radius was predicted with>", "applied_as": {"uid": <int>, "user": "<name or null>"}}`. A `deny` decision is recorded but its change is never applied.
+
+- `radius` must name every member the change's edits touch. When the caller supplies a radius, it must also name every item the predictor gives for the same change; it may add items (that only makes the decision stricter), never drop one.
+- The run set must describe the tree: every job file in `jobs` and every program in `programs` must exist under the root (in `program_dirs`), and its `carddemo_commit` must match the tree's git `HEAD` when the tree is a git checkout. A run set for another tree would predict a narrower radius, so the CLI refuses it before deciding (P4, CB-P3c-r3-S1).
+- `decided_by` is the caller's `--by` text, the person who says they decided. It is not authenticated. `applied_as` is the OS account the CLI ran under, read from the effective uid, not from environment variables. It is the account that wrote the tree and the ledger (SECURITY.md A-2).

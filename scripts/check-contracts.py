@@ -7,7 +7,8 @@
   present) every `before` line matches CardDemo at the pinned commit;
 - fixtures/mini/changes/*.json pass the schema and match the fixture tree;
 - every job file in CardDemo's app/jcl is in runset.json's jobs or excluded_jobs;
-- every run set pins its cobc dialect in cobc_flags.
+- every run set pins its cobc dialect in cobc_flags: one -std= flag, plus only the
+  dialect options in DIALECT_OPTIONS.
 """
 import json
 import sys
@@ -19,6 +20,9 @@ sys.path.insert(0, str(REPO))
 from tests.red._support import schema_errors  # noqa: E402
 
 fails = []
+# Dialect options a run set may add to its -std= flag (P4, RFI-P3a-1). Each one
+# changes how data is read, so a new one is a contract change, not a lane's.
+DIALECT_OPTIONS = {"-fsign=EBCDIC", "-fsign=ASCII"}
 
 
 def check(ok, msg):
@@ -80,8 +84,10 @@ for name, rs in (("contracts/runset.json", runset),
                  ("fixtures/mini/runset.json", json.loads((REPO / "fixtures/mini/runset.json").read_text())),
                  ("fixtures/mini/runset-ebcdic.json", json.loads((REPO / "fixtures/mini/runset-ebcdic.json").read_text()))):
     flags = rs.get("cobc_flags")
-    check(isinstance(flags, list) and flags and all(isinstance(f, str) and f.startswith("-std=") for f in flags),
-          f"{name}: cobc_flags must be a non-empty list of -std= dialect flags (runset.md)")
+    check(isinstance(flags, list) and all(isinstance(f, str) for f in flags)
+          and sum(f.startswith("-std=") for f in flags) == 1
+          and all(f.startswith("-std=") or f in DIALECT_OPTIONS for f in flags),
+          f"{name}: cobc_flags must hold one -std= dialect flag and only the options {sorted(DIALECT_OPTIONS)} (runset.md)")
 if cd_root is not None:
     named = {j["job"] for j in runset["jobs"]} | {j["job"] for j in runset["excluded_jobs"]}
     on_disk = {p.stem.upper() for p in (cd_root / "app/jcl").iterdir()}

@@ -1,6 +1,7 @@
 {
   "type": "object",
-  "required": ["change_id", "carddemo_commit", "cobc_version", "clock", "compile", "steps", "outputs", "input_notes"],
+  "required": ["change_id", "carddemo_commit", "cobc_version", "clock", "compile", "steps", "outputs", "input_notes",
+               "apply_error", "cics_only", "notes"],
   "properties": {
     "change_id": {"type": ["string", "null"]},
     "carddemo_commit": {"type": "string"},
@@ -21,6 +22,9 @@
       }
     },
     "outputs": {"type": "object"},
-    "input_notes": {"type": "object"}
+    "input_notes": {"type": "object"},
+    "apply_error": {"type": ["string", "null"]},
+    "cics_only": {"type": "boolean"},
+    "notes": {"type": "array", "items": {"type": "string"}}
   }
 }

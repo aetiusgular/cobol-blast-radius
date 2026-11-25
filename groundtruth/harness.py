@@ -9,7 +9,9 @@ It never writes under `root`. It never imports the predictor (radius/).
 """
 import os
 import re
+import resource
 import shutil
+import signal
 import subprocess
 from pathlib import Path
 
@@ -19,6 +21,14 @@ from .catalog import GDG_REF, MEMBER_REF, Catalog, Unsupported
 
 REPO = Path(__file__).resolve().parent.parent
 STEP_TIMEOUT = 300
+# The largest file a step's program may write (SECURITY.md G-2). CardDemo's
+# biggest output is well under 1 MiB; a program past this cap gets SIGXFSZ and
+# the step ends as an abend instead of filling the disk.
+STEP_FILE_CAP = 256 * 1024 * 1024
+
+
+def _limit_output():
+    resource.setrlimit(resource.RLIMIT_FSIZE, (STEP_FILE_CAP, STEP_FILE_CAP))
 SYSOUT_DD_STDOUT = "SYSOUT"   # DISPLAY goes to the SYSOUT DD, as under Language Environment
 
 
@@ -585,16 +595,22 @@ class Run:
             if ddname == "SYSIN":
                 stdin_path = env[f"DD_{ddname}"]
         stdin = open(stdin_path, "rb") if stdin_path else subprocess.DEVNULL
+        # stdout and stderr go to files, not pipes, so the file-size cap
+        # (SECURITY.md G-2) bounds them as well as every dataset the step writes.
+        out_path, err_path = stepdir / "stdout", stepdir / "stderr"
         try:
-            r = subprocess.run([str(self.tc.driver())], cwd=stepdir, env=env, stdin=stdin,
-                               capture_output=True, timeout=STEP_TIMEOUT)
-            rc, out, err, timed_out = r.returncode, r.stdout, r.stderr, False
-        except subprocess.TimeoutExpired as exc:
-            rc, out, err, timed_out = None, exc.stdout or b"", exc.stderr or b"", True
+            with open(out_path, "wb") as fo, open(err_path, "wb") as fe:
+                r = subprocess.run([str(self.tc.driver())], cwd=stepdir, env=env, stdin=stdin,
+                                   stdout=fo, stderr=fe, timeout=STEP_TIMEOUT, preexec_fn=_limit_output)
+            rc, timed_out = r.returncode, False
+        except subprocess.TimeoutExpired:
+            rc, timed_out = None, True
         finally:
             if stdin_path:
                 stdin.close()
-        (stepdir / "stderr").write_bytes(err)
+        out, err = out_path.read_bytes(), err_path.read_bytes()
+        if rc == -signal.SIGXFSZ:
+            err += f"GT-ABEND output cap: a file passed {STEP_FILE_CAP} bytes\n".encode()
         errtext = err.decode("latin-1")
         abended = (timed_out or rc is None or rc < 0 or "GT-ABEND" in errtext
                    or re.search(r"libcob: .*error", errtext) is not None)

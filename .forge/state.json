@@ -2,8 +2,8 @@
   "project": "cobol-blast-radius",
   "code": "CB",
   "target": "Hypercubic",
-  "phase": "P3c",
-  "round": 3,
+  "phase": "P4",
+  "round": 1,
   "phases": [
     "P1",
     "P2",
@@ -33,7 +33,8 @@
     "P2": 1,
     "P3a": 1,
     "P3b": 2,
-    "P3c": 2
+    "P3c": 2,
+    "P4": 1
   },
   "needs_box": [
     "P5"

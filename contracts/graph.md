@@ -17,7 +17,7 @@ The red tests and the eval runner read only these two attributes. Anything else 
 | Job | `job:<job name>` | `job:POSTTRAN` |
 | Step | `step:<job>.<step>` or, inside a PROC, `step:<job>.<step>.<procstep>` | `step:TRANREPT.STEP05R.PRC001` |
 | DD | `dd:<step id without the prefix>.<ddname>` | `dd:POSTTRAN.STEP15.DALYTRAN` |
-| Dataset | `dataset:<name>` with names as in `runset.md` (GDG base, `SYSOUT:` names) | `dataset:AWS.M2.CARDDEMO.SYSTRAN` |
+| Dataset | `dataset:<name>` with names as in `runset.md` (GDG base, `SYSOUT:` names, `LIB(MEMBER)` for a library member) | `dataset:AWS.M2.CARDDEMO.SYSTRAN`, `dataset:AWS.M2.CARDDEMO.CNTL(REPROCT)` |
 
 Names are upper case. A program that does not compile, or that uses `EXEC CICS`, is still a node. A utility a step runs (`IDCAMS`, `SORT`, `IEBGENER`, `IEFBR14`, `SDSF`) is a program node too.
 
